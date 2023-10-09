@@ -8,6 +8,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/**
+ * La clase {@code Personaje} representa a un personaje en el sistema.
+ * Contiene propiedades como nombre, fuerza, defensa, nivel, vida, experiencia
+ * y estado de actividad.
+ *
+ * <p>
+ * El autor de esta clase es Víctor Colorado "Kid A".
+ * </p>
+ *
+ * @version 1.0
+ * @since 06 de octubre de 2023
+ */
 @Entity
 @Table(name = "personajes")
 public class Personaje {
@@ -40,6 +52,10 @@ public class Personaje {
 		this.vidaActual = vidaOriginal;
 		this.experiencia = 0;
 		this.activo = true;
+	}
+	
+	public Personaje() {
+		
 	}
 
 	public int getIdPersonaje() {

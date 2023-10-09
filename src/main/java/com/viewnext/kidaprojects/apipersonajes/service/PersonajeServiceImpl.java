@@ -15,7 +15,17 @@ import com.viewnext.kidaprojects.apipersonajes.repository.PersonajeRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
-
+/**
+ * La clase {@code PersonajeServiceImpl} implementa la interfaz {@code PersonajeService}
+ * y proporciona métodos para administrar la entidad "Personaje" en el sistema.
+ * 
+ * <p>
+ * El autor de esta clase es Víctor Colorado "Kid A".
+ * </p>
+ * 
+ * @version 1.0
+ * @since 06 de octubre de 2023
+ */
 @Service
 public class PersonajeServiceImpl implements PersonajeService {
 
@@ -25,11 +35,23 @@ public class PersonajeServiceImpl implements PersonajeService {
 	private WebClient misionWebClient;
 	private WebClient enemigoWebClient;
 
+	/**
+     * Constructor de la clase {@code PersonajeServiceImpl}.
+     *
+     * @param misionWebClient   Cliente web para acceder a las misiones.
+     * @param enemigoWebClient  Cliente web para acceder a los enemigos.
+     */
 	public PersonajeServiceImpl(WebClient misionWebClient, WebClient enemigoWebClient) {
 		this.misionWebClient = misionWebClient;
 		this.enemigoWebClient = enemigoWebClient;
 	}
 
+	/**
+     * Recupera todos los personajes en el sistema.
+     *
+     * @return Lista de personajes si existen, o lanza una excepción {@code EntityNotFoundException} si no se encuentran.
+     * @throws EntityNotFoundException Si no se encuentran personajes.
+     */
 	@Override
 	public List<Personaje> showAll() throws EntityNotFoundException {
 		List<Personaje> listaPersonajes = personajeRepository.findAll();
@@ -40,6 +62,12 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return listaPersonajes;
 	}
 
+	 /**
+     * Recupera todos los personajes activos en el sistema.
+     *
+     * @return Lista de personajes activos si existen, o lanza una excepción {@code EntityNotFoundException} si no se encuentran.
+     * @throws EntityNotFoundException Si no se encuentran personajes activos.
+     */
 	@Override
 	public List<Personaje> showActivos() throws EntityNotFoundException {
 		List<Personaje> listaPersonajes = personajeRepository.findPersonajesActivos();
@@ -50,6 +78,13 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return listaPersonajes;
 	}
 
+	/**
+     * Recupera un personaje por su ID.
+     *
+     * @param idPersonaje El ID del personaje a obtener.
+     * @return El personaje si existe, o lanza una excepción {@code EntityNotFoundException} si no se encuentra.
+     * @throws EntityNotFoundException Si no se encuentra el personaje.
+     */
 	@Override
 	public Personaje showPersonajeById(int idPersonaje) throws EntityNotFoundException {
 		Optional<Personaje> optionalPersonaje = personajeRepository.findById(idPersonaje);
@@ -61,12 +96,26 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return optionalPersonaje.get();
 	}
 
+	/**
+     * Crea un nuevo personaje en el sistema.
+     *
+     * @param personaje El objeto {@code Personaje} a crear.
+     * @return El nuevo personaje creado.
+     */
 	@Override
 	public Personaje createPersonaje(Personaje personaje) {
 
 		return personajeRepository.save(personaje);
 	}
 
+	/**
+     * Actualiza la vida de un personaje.
+     *
+     * @param idPersonaje El ID del personaje a actualizar.
+     * @param damage      El daño a aplicar al personaje.
+     * @return El personaje actualizado.
+     * @throws EntityNotFoundException Si no se encuentra el personaje.
+     */
 	@Override
 	public Personaje updateVida(int idPersonaje, int damage) throws EntityNotFoundException {
 		Optional<Personaje> optionalPersonaje = personajeRepository.findById(idPersonaje);
@@ -88,6 +137,13 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return personajeRepository.save(personaje);
 	}
 
+	/**
+	 * Sube de nivel a un personaje en el sistema.
+	 *
+	 * @param idPersonaje El ID del personaje a subir de nivel.
+	 * @return El personaje actualizado después de subir de nivel.
+	 * @throws EntityNotFoundException Si no se encuentra el personaje.
+	 */
 	@Override
 	public Personaje subirNivel(int idPersonaje) {
 		Optional<Personaje> optionalPersonaje = personajeRepository.findById(idPersonaje);
@@ -106,6 +162,14 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return personajeRepository.save(personaje);
 	}
 
+	/**
+	 * Actualiza la experiencia de un personaje.
+	 *
+	 * @param idPersonaje   El ID del personaje a actualizar.
+	 * @param experiencia   La cantidad de experiencia a agregar al personaje.
+	 * @return El personaje actualizado después de agregar experiencia.
+	 * @throws EntityNotFoundException Si no se encuentra el personaje.
+	 */
 	@Override
 	public Personaje updateExperiencia(int idPersonaje, int experiencia) throws EntityNotFoundException {
 		Optional<Personaje> optionalPersonaje = personajeRepository.findById(idPersonaje);
@@ -133,6 +197,15 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return personajeRepository.save(personaje);
 	}
 
+	/**
+	 * Reclama recompensa de una misión y actualiza el personaje.
+	 *
+	 * @param idMision     El ID de la misión a reclamar.
+	 * @param idPersonaje  El ID del personaje que reclama la recompensa.
+	 * @return El personaje actualizado después de reclamar la recompensa de la misión.
+	 * @throws EntityNotFoundException Si no se encuentra la misión o el personaje.
+	 * @throws ReclamarRewardException  Si ocurre un error al reclamar la recompensa.
+	 */
 	@Override
 	public Personaje reclamarRecompensaMision(int idMision, int idPersonaje)
 			throws EntityNotFoundException, ReclamarRewardException {
@@ -142,7 +215,7 @@ public class PersonajeServiceImpl implements PersonajeService {
 					.retrieve()
 					.bodyToMono(Integer.class)
 					.block();
-
+			
 			return updateExperiencia(idPersonaje, recompensa);
 
 		} catch (WebClientResponseException e) {
@@ -154,6 +227,15 @@ public class PersonajeServiceImpl implements PersonajeService {
 		throw new ReclamarRewardException();
 	}
 
+	/**
+	 * Reclama recompensa de un enemigo vencido y actualiza el personaje.
+	 *
+	 * @param idEnemigo    El ID del enemigo vencido.
+	 * @param idPersonaje  El ID del personaje que reclama la recompensa.
+	 * @return El personaje actualizado después de reclamar la recompensa del enemigo.
+	 * @throws EntityNotFoundException Si no se encuentra el enemigo o el personaje.
+	 * @throws ReclamarRewardException  Si ocurre un error al reclamar la recompensa.
+	 */
 	@Override
 	public Personaje reclamarRecompensaEnemigo(int idEnemigo, int idPersonaje)
 			throws EntityNotFoundException, ReclamarRewardException {
@@ -175,6 +257,14 @@ public class PersonajeServiceImpl implements PersonajeService {
 		throw new ReclamarRewardException();
 	}
 
+	/**
+	 * Actualiza el estado (activo/inactivo) de un personaje.
+	 *
+	 * @param idPersonaje  El ID del personaje a actualizar.
+	 * @param estado       El nuevo estado del personaje.
+	 * @return El personaje actualizado con su nuevo estado.
+	 * @throws EntityNotFoundException Si no se encuentra el personaje.
+	 */
 	@Override
 	public Personaje setActividadPersonaje(int idPersonaje, boolean estado) throws EntityNotFoundException {
 		Optional<Personaje> optionalPersonaje = personajeRepository.findById(idPersonaje);
@@ -190,6 +280,9 @@ public class PersonajeServiceImpl implements PersonajeService {
 		return personajeRepository.save(personaje);
 	}
 
+	/**
+	 * Reinicia todos los personajes en el sistema.
+	 */
 	@Override
 	public void reiniciarPersonajes() {
 		List<Personaje> listaPersonajes = personajeRepository.findAll();
